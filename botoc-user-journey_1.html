@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>BoToc Trading — User Journey</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/mermaid/10.6.1/mermaid.min.js"></script>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { font-family: 'Segoe UI', sans-serif; background: #0A0612; color: #FAF7FF; padding: 2rem; min-height: 100vh; }
+  h1 { text-align: center; font-size: 1.8rem; margin-bottom: 0.4rem; background: linear-gradient(135deg, #A855F7, #F59E0B); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
+  .subtitle { text-align: center; color: rgba(216,180,254,0.5); font-size: 0.85rem; margin-bottom: 2.5rem; letter-spacing: 0.1em; text-transform: uppercase; }
+  .tabs { display: flex; justify-content: center; gap: 0.75rem; margin-bottom: 2rem; flex-wrap: wrap; }
+  .tab-btn { padding: 0.6rem 1.8rem; border-radius: 100px; border: 1px solid rgba(168,85,247,0.3); background: rgba(168,85,247,0.08); color: rgba(216,180,254,0.6); cursor: pointer; font-size: 0.88rem; font-weight: 600; transition: all 0.2s; }
+  .tab-btn:hover { border-color: #A855F7; color: #D8B4FE; }
+  .tab-btn.active { background: linear-gradient(135deg, #6B21A8, #A855F7); border-color: transparent; color: white; box-shadow: 0 0 20px rgba(168,85,247,0.4); }
+  .tab-content { display: none; }
+  .tab-content.active { display: block; }
+  .diagram-wrap { background: rgba(255,255,255,0.03); border: 1px solid rgba(168,85,247,0.2); border-radius: 20px; padding: 2rem; overflow-x: auto; }
+  .diagram-wrap .mermaid { display: flex; justify-content: center; }
+  .legend { display: flex; gap: 1.5rem; flex-wrap: wrap; justify-content: center; margin-top: 1.5rem; padding: 1rem 1.5rem; background: rgba(255,255,255,0.02); border-radius: 12px; border: 1px solid rgba(168,85,247,0.1); }
+  .legend-item { display: flex; align-items: center; gap: 0.5rem; font-size: 0.78rem; color: rgba(216,180,254,0.6); }
+  .legend-dot { width: 12px; height: 12px; border-radius: 3px; flex-shrink: 0; }
+  .section-desc { text-align: center; color: rgba(216,180,254,0.5); font-size: 0.82rem; margin-bottom: 1.2rem; font-style: italic; }
+</style>
+</head>
+<body>
+
+<h1>BoToc Trading Group</h1>
+<p class="subtitle">User Journey Map — 3 Loai Nguoi Dung</p>
+
+<div class="tabs">
+  <button class="tab-btn active" onclick="showTab('guest', this)">👤 Khách Vãng Lai</button>
+  <button class="tab-btn" onclick="showTab('member', this)">🏆 Thành Viên</button>
+  <button class="tab-btn" onclick="showTab('admin', this)">⚙️ Admin</button>
+</div>
+
+<!-- GUEST -->
+<div class="tab-content active" id="tab-guest">
+  <p class="section-desc">Hành trình từ lần đầu ghé thăm đến khi tham gia nhóm</p>
+  <div class="diagram-wrap">
+    <div class="mermaid" id="guest-diagram"></div>
+  </div>
+  <div class="legend">
+    <div class="legend-item"><div class="legend-dot" style="background:#A855F7"></div> Hành động</div>
+    <div class="legend-item"><div class="legend-dot" style="background:#F59E0B"></div> Điểm quyết định</div>
+    <div class="legend-item"><div class="legend-dot" style="background:#34D399"></div> Kết quả tích cực</div>
+    <div class="legend-item"><div class="legend-dot" style="background:#F87171"></div> Rời trang</div>
+  </div>
+</div>
+
+<!-- MEMBER -->
+<div class="tab-content" id="tab-member">
+  <p class="section-desc">Hành trình của thành viên đã được duyệt</p>
+  <div class="diagram-wrap">
+    <div class="mermaid" id="member-diagram"></div>
+  </div>
+  <div class="legend">
+    <div class="legend-item"><div class="legend-dot" style="background:#A855F7"></div> Hành động</div>
+    <div class="legend-item"><div class="legend-dot" style="background:#F59E0B"></div> Điểm quyết định</div>
+    <div class="legend-item"><div class="legend-dot" style="background:#34D399"></div> Kết quả tích cực</div>
+  </div>
+</div>
+
+<!-- ADMIN -->
+<div class="tab-content" id="tab-admin">
+  <p class="section-desc">Hành trình quản lý hệ thống, thành viên và nội dung</p>
+  <div class="diagram-wrap">
+    <div class="mermaid" id="admin-diagram"></div>
+  </div>
+  <div class="legend">
+    <div class="legend-item"><div class="legend-dot" style="background:#F59E0B"></div> Điểm bắt đầu</div>
+    <div class="legend-item"><div class="legend-dot" style="background:#A855F7"></div> Tác vụ quản trị</div>
+    <div class="legend-item"><div class="legend-dot" style="background:#34D399"></div> Thành công</div>
+    <div class="legend-item"><div class="legend-dot" style="background:#F87171"></div> Lỗi cần xử lý</div>
+  </div>
+</div>
+
+<script>
+mermaid.initialize({
+  startOnLoad: false,
+  theme: 'dark',
+  themeVariables: {
+    primaryColor: '#2D1052',
+    primaryTextColor: '#FAF7FF',
+    primaryBorderColor: '#A855F7',
+    lineColor: '#A855F7',
+    secondaryColor: '#1A0F2E',
+    background: '#0A0612',
+    mainBkg: '#1A0F2E',
+    fontSize: '14px'
+  },
+  flowchart: { curve: 'basis', padding: 20 }
+});
+
+const diagrams = {
+  guest: `flowchart TD
+    A([Vao website]) --> B[Xem Hero Section]
+    B --> C[Xem Ticker gia crypto live]
+    C --> D{Quan tam?}
+    D -->|Khong| Z1([Roi trang])
+    D -->|Co| E[Kham pha website]
+    E --> F[Xem Hieu Suat Giao Dich]
+    E --> G[Doc Ve Chung Toi]
+    E --> H[Xem Nguoi Moi]
+    E --> I[Doc Review thanh vien]
+    F --> J{An tuong?}
+    G --> J
+    H --> J
+    I --> J
+    J -->|Khong| Z2([Roi trang])
+    J -->|Muon tham gia chat| K[Quet QR Zalo hoac Telegram]
+    J -->|Muon chinh thuc| L[Dien Form Dang Ky]
+    K --> M[Vao nhom chat]
+    L --> N[Cho Admin duyet 24h]
+    M --> N
+    N --> O([Tro thanh Thanh Vien])
+    style A fill:#1A0F2E,stroke:#A855F7,color:#FAF7FF
+    style O fill:#065F46,stroke:#34D399,color:#FAF7FF
+    style Z1 fill:#450A0A,stroke:#F87171,color:#FAF7FF
+    style Z2 fill:#450A0A,stroke:#F87171,color:#FAF7FF
+    style D fill:#2D1052,stroke:#F59E0B,color:#FAF7FF
+    style J fill:#2D1052,stroke:#F59E0B,color:#FAF7FF
+    style N fill:#1A2A1A,stroke:#34D399,color:#FAF7FF`,
+
+  member: `flowchart TD
+    A([Duoc Admin Duyet]) --> B[Dang Nhap Email va Mat khau]
+    B --> C{Lan dau dang nhap?}
+    C -->|Co| D[Onboarding - Gioi thieu tinh nang]
+    C -->|Khong| E[Dashboard Ca Nhan]
+    D --> E
+    E --> F{Chon hoat dong}
+    F --> G[Xem Hieu Suat Nhom]
+    F --> H[Hoc Kien Thuc P2P va San]
+    F --> I[Doc Tin Tuc va Event]
+    F --> J[Tham gia nhom Zalo Telegram]
+    F --> K[Dung Link AFF dang ky san]
+    G --> L{Muon dong gop them?}
+    H --> L
+    I --> M[Dang ky tham du Event]
+    J --> L
+    K --> N[Nhan hoa hong AFF]
+    L -->|Co| O[Gioi thieu ban be vao nhom]
+    L -->|Khong| P([Tiep tuc hoc va theo doi])
+    O --> Q([Thanh vien tich cuc])
+    M --> P
+    N --> P
+    style A fill:#065F46,stroke:#34D399,color:#FAF7FF
+    style Q fill:#065F46,stroke:#34D399,color:#FAF7FF
+    style P fill:#1A0F2E,stroke:#A855F7,color:#FAF7FF
+    style B fill:#2D1052,stroke:#A855F7,color:#FAF7FF
+    style C fill:#2D1052,stroke:#F59E0B,color:#FAF7FF
+    style F fill:#2D1052,stroke:#F59E0B,color:#FAF7FF
+    style L fill:#2D1052,stroke:#F59E0B,color:#FAF7FF
+    style N fill:#1A3A1A,stroke:#34D399,color:#FAF7FF`,
+
+  admin: `flowchart TD
+    A([Admin Dang Nhap]) --> B[Dashboard Tong Quan]
+    B --> C{Chon tac vu}
+    C --> D[Quan Ly Thanh Vien]
+    C --> E[Upload Hieu Suat]
+    C --> F[Dang Thong Bao va Chien Dich]
+    C --> G[Quan Ly Noi Dung]
+    C --> H[Cap Nhat Link AFF]
+    D --> D1[Xem danh sach thanh vien]
+    D --> D2[Duyet hoac Tu choi don dang ky]
+    D --> D3[Vo hieu hoa tai khoan vi pham]
+    E --> E1[Tai len file Excel hoac CSV]
+    E1 --> E2[He thong parse va validate]
+    E2 --> E3{Du lieu hop le?}
+    E3 -->|Co| E4[Publish len Dashboard]
+    E3 -->|Loi| E5[Bao loi - Yeu cau chinh sua]
+    E5 --> E1
+    F --> F1[Soan thong bao]
+    F1 --> F2[Chon kenh Website hoac Telegram]
+    F2 --> F3[Members nhan thong bao]
+    G --> G1[Them Sua Xoa Tin tuc va Event]
+    G --> G2[Cap nhat FAQ]
+    H --> H1[Cap nhat link theo tung san]
+    D2 --> I[Gui thong bao chao mung Telegram]
+    I --> J([Member moi kich hoat])
+    E4 --> K([Dashboard cap nhat])
+    F3 --> L([Members duoc thong bao])
+    style A fill:#1A0F2E,stroke:#F59E0B,color:#FAF7FF
+    style J fill:#065F46,stroke:#34D399,color:#FAF7FF
+    style K fill:#065F46,stroke:#34D399,color:#FAF7FF
+    style L fill:#065F46,stroke:#34D399,color:#FAF7FF
+    style C fill:#2D1052,stroke:#F59E0B,color:#FAF7FF
+    style E3 fill:#2D1052,stroke:#F59E0B,color:#FAF7FF
+    style E5 fill:#450A0A,stroke:#F87171,color:#FAF7FF
+    style E4 fill:#065F46,stroke:#34D399,color:#FAF7FF
+    style B fill:#2D1052,stroke:#A855F7,color:#FAF7FF`
+};
+
+async function renderDiagram(id, definition) {
+  const el = document.getElementById(id + '-diagram');
+  try {
+    const { svg } = await mermaid.render('mermaid-' + id, definition);
+    el.innerHTML = svg;
+  } catch(e) {
+    el.innerHTML = '<p style="color:#F87171;padding:1rem">Loi render: ' + e.message + '</p>';
+    console.error(e);
+  }
+}
+
+function showTab(id, btn) {
+  document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
+  document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+  document.getElementById('tab-' + id).classList.add('active');
+  btn.classList.add('active');
+  renderDiagram(id, diagrams[id]);
+}
+
+// Render guest on load
+renderDiagram('guest', diagrams['guest']);
+</script>
+</body>
+</html>
