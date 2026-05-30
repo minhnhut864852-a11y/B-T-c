@@ -1636,7 +1636,7 @@ section.hero {
           <p data-vi="Lợi nhuận là kết quả — bảo toàn vốn mới là nền tảng. Mỗi lệnh được kiểm soát với tỷ lệ Risk/Reward rõ ràng, không để cảm xúc chi phối." data-en="Profit is the result — capital preservation is the foundation. Every trade is controlled with a clear Risk/Reward ratio, no emotional decision-making.">Lợi nhuận là kết quả — bảo toàn vốn mới là nền tảng. Mỗi lệnh được kiểm soát với tỷ lệ Risk/Reward rõ ràng, không để cảm xúc chi phối.</p>
         </div>
         <div class="value-card-inline">
-          <h4>🤝 <span data-vi="Cộng Đồng" data-en="Community">Cộng Đồng</span></h4>
+          <h4><img src="icon_comnunity_1.svg" style="width:20px;height:20px;vertical-align:middle;margin-right:6px;margin-bottom:2px" alt=""><span data-vi="Cộng Đồng" data-en="Community">Cộng Đồng</span></h4>
           <p data-vi="Thành công cá nhân gắn liền với sức mạnh cộng đồng. Chia sẻ kiến thức, hỗ trợ lẫn nhau, cùng vượt qua drawdown. Một bộ tộc kỷ luật sẽ đi xa." data-en="Personal success is tied to community strength. Share knowledge, support each other, overcome drawdowns together. A disciplined tribe goes far.">Thành công cá nhân gắn liền với sức mạnh cộng đồng. Chia sẻ kiến thức, hỗ trợ lẫn nhau, cùng vượt qua drawdown. Một bộ tộc kỷ luật sẽ đi xa.</p>
         </div>
         <div class="value-card-inline">
@@ -1706,16 +1706,7 @@ section.hero {
       </div>
       <div class="contact-card" onclick="if(window.gaEvent)gaEvent('click_telegram',{source:'contact_card'});window.open('https://t.me/+Ui0Tj7FsdUpkMjFl','_blank')" style="cursor:pointer;">
         <div class="contact-icon tele">
-          <svg width="30" height="30" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-            <circle cx="12" cy="12" r="12" fill="url(#teleGrad)"/>
-            <path d="M5.5 11.8l10.3-3.97c.48-.17.9.12.74.85l-1.75 8.24c-.13.58-.48.72-.97.45l-2.7-1.99-1.3 1.25c-.14.14-.27.26-.55.26l.2-2.76 5.07-4.58c.22-.2-.05-.3-.34-.11L7.3 13.5 4.65 12.7c-.56-.17-.57-.56.17-.83z" fill="white"/>
-            <defs>
-              <linearGradient id="teleGrad" x1="0" y1="0" x2="24" y2="24" gradientUnits="userSpaceOnUse">
-                <stop offset="0%" stop-color="#2AABEE"/>
-                <stop offset="100%" stop-color="#229ED9"/>
-              </linearGradient>
-            </defs>
-          </svg>
+          <img src="icon_telegram.svg" style="width:44px;height:44px" alt="Telegram">
         </div>
         <div class="contact-info">
           <h4>Telegram</h4>
@@ -1724,9 +1715,7 @@ section.hero {
       </div>
       <div class="contact-card" onclick="window.open('https://www.tiktok.com/@h.w.ngg','_blank')" style="cursor:pointer;">
         <div class="contact-icon tiktok-contact">
-          <svg width="28" height="28" viewBox="0 0 24 24" fill="white" xmlns="http://www.w3.org/2000/svg">
-            <path d="M19.59 6.69a4.83 4.83 0 0 1-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 0 1-2.88 2.5 2.89 2.89 0 0 1-2.89-2.89 2.89 2.89 0 0 1 2.89-2.89c.28 0 .54.04.79.1V9.01a6.27 6.27 0 0 0-.79-.05 6.34 6.34 0 0 0-6.34 6.34 6.34 6.34 0 0 0 6.34 6.34 6.34 6.34 0 0 0 6.33-6.34V8.69a8.18 8.18 0 0 0 4.78 1.52V6.76a4.85 4.85 0 0 1-1.01-.07z"/>
-          </svg>
+          <img src="icon_tiktok.svg" style="width:44px;height:44px" alt="TikTok">
         </div>
         <div class="contact-info">
           <h4>TikTok</h4>
@@ -1928,7 +1917,7 @@ section.hero {
       </div>
       <!-- UID section -->
       <div class="form-group" style="margin-top:.8rem;margin-bottom:0">
-        <label data-vi="Bạn đã có UID chưa?" data-en="Do you have a UID?">Bạn đã có UID chưa?</label>
+        <label data-vi="Bạn đã tham gia sàn giao dịch chưa?" data-en="Have you joined an exchange?">Bạn đã tham gia sàn giao dịch chưa?</label>
         <div class="pill-group" id="m-inp-uid-group">
           <button type="button" class="pill-chip" data-value="no" onclick="selectUidStatus(this,'no')">❌ Chưa có</button>
           <button type="button" class="pill-chip" data-value="yes" onclick="selectUidStatus(this,'yes')">✅ Đã có</button>
@@ -1943,11 +1932,12 @@ section.hero {
               <button type="button" class="pill-chip" data-value="mexc" onclick="selectExchange(this)">MEXC</button>
               <button type="button" class="pill-chip" data-value="bingx" onclick="selectExchange(this)">BingX</button>
               <button type="button" class="pill-chip" data-value="bybit" onclick="selectExchange(this)">Bybit</button>
+              <button type="button" class="pill-chip" data-value="khac" onclick="selectExchange(this)">Sàn Khác</button>
             </div>
           </div>
           <div class="form-group" style="margin-bottom:0">
             <label data-vi="Mã UID <span class='req'>*</span>" data-en="UID Code <span class='req'>*</span>">Mã UID <span class="req">*</span></label>
-            <input type="tel" id="m-inp-uid-value" inputmode="numeric" placeholder="Nhập mã UID của bạn" oninput="this.value=this.value.replace(/\D/g,'')" style="width:100%;box-sizing:border-box">
+            <input type="text" id="m-inp-uid-value" placeholder="Nhập mã UID của bạn" style="width:100%;box-sizing:border-box">
           </div>
         </div>
         <p style="font-size:.75rem;color:rgba(216,180,254,0.55);margin:0;line-height:1.5">
