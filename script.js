@@ -498,6 +498,21 @@ function updateDashboard() {
   if(changes[1]) changes[1].textContent = getPeriodLabel(m, y, '');
   if(changes[2]) changes[2].textContent = getPeriodLabel(m, y, '');
 
+  // New metrics: longest win streak + avg profit per trade
+  let maxStreak = 0, curStreak = 0;
+  filtered.forEach(t => {
+    if (t.k === 'THẮNG') { curStreak++; if (curStreak > maxStreak) maxStreak = curStreak; }
+    else curStreak = 0;
+  });
+  const avgPnl = totalLenh > 0 ? (totalLN / totalLenh) : null;
+  const avgPnlDisp = avgPnl !== null ? (avgPnl >= 0 ? '+' : '') + avgPnl.toFixed(2) + '%' : '—';
+  const streakEl = document.getElementById('metric-streak');
+  const avgEl    = document.getElementById('metric-avgpnl');
+  const avgSubEl = document.getElementById('metric-avgpnl-sub');
+  if (streakEl) streakEl.textContent = maxStreak > 0 ? maxStreak + ' lệnh' : '—';
+  if (avgEl)    avgEl.textContent    = avgPnlDisp;
+  if (avgSubEl) avgSubEl.textContent = getPeriodLabel(m, y, '');
+
   // Render dynamic chart
   renderChart(m, y);
 

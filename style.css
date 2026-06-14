@@ -182,7 +182,7 @@ section{padding:5rem 4rem;position:relative;}
 .dashboard-header{display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:1rem;margin-bottom:2rem;padding:1.4rem 1.8rem;background:rgba(255,255,255,0.03);border:1px solid rgba(168,85,247,0.2);border-radius:16px;}
 .dash-title{font-family:'Playfair Display',serif;font-size:1.3rem;font-weight:700;}
 .dash-badge{font-family:'Space Mono',monospace;font-size:0.7rem;background:rgba(245,158,11,0.15);border:1px solid rgba(245,158,11,0.3);color:var(--gold);padding:0.3rem 0.8rem;border-radius:100px;letter-spacing:0.1em;}
-.dash-metrics{display:grid;grid-template-columns:repeat(4,1fr);gap:1rem;margin-bottom:2rem;}
+.dash-metrics{display:grid;grid-template-columns:repeat(4,1fr);gap:1rem;margin-top:2.5rem;margin-bottom:2rem;}
 .metric-card{background:rgba(255,255,255,0.03);border:1px solid rgba(168,85,247,0.15);border-radius:14px;padding:1.4rem;transition:all 0.3s;}
 .metric-card:hover{border-color:rgba(168,85,247,0.4);background:rgba(168,85,247,0.05);}
 .metric-label{font-size:0.72rem;letter-spacing:0.1em;text-transform:uppercase;color:var(--muted);margin-bottom:0.7rem;}
@@ -422,6 +422,9 @@ footer{background:var(--dark);border-top:1px solid rgba(168,85,247,0.15);padding
   section{padding:3rem 1.2rem;}
   .section-title{font-size:1.7rem;}
   .dash-metrics{grid-template-columns:repeat(2,1fr);gap:0.8rem;}
+  .trade-table table{min-width:0;}
+  .trade-table th,.trade-table td{padding:0.6rem 0.5rem;font-size:0.72rem;}
+  .trade-table th:nth-child(5),.trade-table td:nth-child(5){display:none;}
   .metric-value{font-size:1.3rem;}
   .partners-grid{grid-template-columns:1fr;}
   .tab-buttons{gap:0.4rem;}
