@@ -710,6 +710,7 @@ tr:hover td{background:rgba(139,92,246,0.04)}
                 <col style="width:100px">
                 <col style="width:80px">
                 <col style="width:140px">
+                <col style="width:130px">
                 <col style="width:90px">
                 <col style="width:100px">
                 <col>
@@ -722,13 +723,14 @@ tr:hover td{background:rgba(139,92,246,0.04)}
                   <th>Zalo</th>
                   <th>Vốn</th>
                   <th>Mục Tiêu</th>
+                  <th>UID</th>
                   <th>Ngày ĐK</th>
                   <th>Trạng Thái</th>
                   <th>Thao Tác</th>
                 </tr>
               </thead>
               <tbody id="members-tbody">
-                <tr><td colspan="9" style="text-align:center;padding:2rem"><span class="spinner"></span></td></tr>
+                <tr><td colspan="10" style="text-align:center;padding:2rem"><span class="spinner"></span></td></tr>
               </tbody>
             </table>
           </div>
@@ -1721,10 +1723,10 @@ const _approvedIds = new Set();
 
 async function loadMembers() {
   const tbody = document.getElementById('members-tbody');
-  tbody.innerHTML = '<tr><td colspan="9" style="text-align:center;padding:2rem"><span class="spinner"></span></td></tr>';
+  tbody.innerHTML = '<tr><td colspan="10" style="text-align:center;padding:2rem"><span class="spinner"></span></td></tr>';
   const { data, error } = await sb.from('Registration').select('*').order('created_at', { ascending: false });
-  if (error) { tbody.innerHTML = '<tr><td colspan="9" class="empty"><p>Lỗi tải dữ liệu</p></td></tr>'; return; }
-  if (!data?.length) { tbody.innerHTML = '<tr><td colspan="9" class="empty"><div class="icon">📭</div><p>Chưa có thành viên nào</p></td></tr>'; return; }
+  if (error) { tbody.innerHTML = '<tr><td colspan="10" class="empty"><p>Lỗi tải dữ liệu</p></td></tr>'; return; }
+  if (!data?.length) { tbody.innerHTML = '<tr><td colspan="10" class="empty"><div class="icon">📭</div><p>Chưa có thành viên nào</p></td></tr>'; return; }
 
   _allMembers = data;
 
@@ -1754,7 +1756,7 @@ function renderMembersTable(data) {
   const tbody = document.getElementById('members-tbody');
   const countEl = document.getElementById('mf-count');
   if (countEl) countEl.textContent = `${data.length} thành viên`;
-  if (!data.length) { tbody.innerHTML = '<tr><td colspan="9" class="empty"><div class="icon">🔍</div><p>Không có kết quả phù hợp</p></td></tr>'; return; }
+  if (!data.length) { tbody.innerHTML = '<tr><td colspan="10" class="empty"><div class="icon">🔍</div><p>Không có kết quả phù hợp</p></td></tr>'; return; }
 
   tbody.innerHTML = data.map((r,i) => {
     const status = r.status || 'pending';
@@ -1799,6 +1801,9 @@ function renderMembersTable(data) {
       <td><span class="badge badge-purple" style="font-size:.72rem">${esc(r.von || '—')}</span></td>
       <td style="font-size:.75rem;color:var(--text2);overflow:hidden;text-overflow:ellipsis;white-space:nowrap" title="${esc(r.muc_tieu||'')}">
         ${goalShort !== '—' ? goalShort : '—'}
+      </td>
+      <td style="font-size:.78rem;color:var(--text2);overflow:hidden;text-overflow:ellipsis;white-space:nowrap" title="${esc(r.uid_value||'')}${r.san?' · '+esc(r.san):''}">
+        ${r.uid_value ? `${esc(r.uid_value)}${r.san ? `<span style="color:var(--text3)"> · ${esc(r.san)}</span>` : ''}` : '<span style="color:var(--text3)">—</span>'}
       </td>
       <td style="color:var(--text2);font-size:.78rem;white-space:nowrap">${fmtDate(r.created_at)}</td>
       <td>${statusBadge}</td>
