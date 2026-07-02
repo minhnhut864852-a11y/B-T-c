@@ -1833,7 +1833,7 @@ async function loadDynamicContent() {
             : '';
           return `
             <div class="news-card" style="opacity:1;transform:none;position:relative">
-              ${cardShareHtml(title || '')}
+              ${cardShareHtml(title || '', item.cover_image || '', item.id || '', 'news')}
               <div class="news-img" style="${imgStyle}min-height:185px;"></div>
               <div class="news-body">
                 <div style="display:flex;align-items:center;justify-content:space-between;">
@@ -1882,7 +1882,7 @@ async function loadDynamicContent() {
             : (status === 'ended' ? '<span class="event-status-tag is-ended">Đã Kết Thúc</span>' : '');
           return `
             <div class="event-card-v2${status==='ended' ? ' is-ended' : ''}" style="opacity:1;transform:none;position:relative" onclick="openEventDetail('${item.id}')">
-              ${cardShareHtml(item.title || '')}
+              ${cardShareHtml(item.title || '', '', '', '')}
               <div class="event-card-v2-header">
                 <div class="event-date-block${status==='ended' ? ' is-ended' : ''}">
                   <span class="eday">${day}</span>
@@ -2103,11 +2103,12 @@ function closeEventDetail() {
 // ═══════════════════════════════════════════════════════════════
 // SHARE BUTTON — news / daily news (navigator.share + fallback)
 // ═══════════════════════════════════════════════════════════════
-function shareArticle(title, btnEl) {
-  const url = location.origin + location.pathname;
+function shareArticle(title, imageUrl, articleId, articleType, btnEl) {
+  const siteUrl   = 'https://botoc.trading';
+  const shareUrl  = articleId ? siteUrl + '/share/?id=' + encodeURIComponent(articleId) + '&type=' + encodeURIComponent(articleType || 'news') : (articleType === 'daily' ? siteUrl + '/#tin-hang-ngay' : siteUrl + '/#news');
   const text = title || document.title;
   if (navigator.share) {
-    navigator.share({ title: text, text: text, url: url }).catch(() => {});
+    navigator.share({ title: text, text: text, url: shareUrl }).catch(() => {});
     return;
   }
   const wrap = btnEl ? btnEl.closest('.share-wrap') : null;
@@ -2116,7 +2117,7 @@ function shareArticle(title, btnEl) {
   if (!fb) return;
   fb.classList.toggle('open');
   const tgLink = fb.querySelector('.share-tg');
-  if (tgLink) tgLink.href = 'https://t.me/share/url?url=' + encodeURIComponent(url) + '&text=' + encodeURIComponent(text);
+  if (tgLink) tgLink.href = 'https://t.me/share/url?url=' + encodeURIComponent(shareUrl) + '&text=' + encodeURIComponent(text);
   const copyBtn = fb.querySelector('.share-copy');
   if (copyBtn) {
     copyBtn.onclick = function() {
@@ -2130,9 +2131,9 @@ function shareArticle(title, btnEl) {
 
 const CARD_SHARE_ICON_SVG = '<svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="#2563eb" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round"><path d="M4 13c0-4.5 4-7 9-7"/><path d="M9.5 2.8L13 6l-3.5 3.2"/></svg>';
 
-function cardShareHtml(title) {
+function cardShareHtml(title, imageUrl, articleId, articleType) {
   return '<div class="share-wrap card-share-wrap" onclick="event.stopPropagation()">'
-    + '<button class="card-share-btn" data-share-title="' + escHtml(title || '') + '" onclick="shareArticle(this.dataset.shareTitle, this)" title="Chia Sẻ" aria-label="Chia Sẻ">' + CARD_SHARE_ICON_SVG + '</button>'
+    + '<button class="card-share-btn" data-share-title="' + escHtml(title || '') + '" data-share-img="' + escHtml(imageUrl || '') + '" data-share-id="' + escHtml(articleId || '') + '" data-share-type="' + escHtml(articleType || '') + '" onclick="shareArticle(this.dataset.shareTitle, this.dataset.shareImg, this.dataset.shareId, this.dataset.shareType, this)" title="Chia Sẻ" aria-label="Chia Sẻ">' + CARD_SHARE_ICON_SVG + '</button>'
     + '<div class="share-fallback">'
     + '<a class="share-tg" href="#" target="_blank" rel="noopener">✈️ Telegram</a>'
     + '<button class="share-copy" type="button">🔗 Copy Link</button>'
@@ -2522,7 +2523,7 @@ function renderDailyNews(items) {
     var d = item.news_date ? new Date(item.news_date + 'T00:00:00') : null;
     var dateStr = d ? ('0'+d.getDate()).slice(-2)+'/'+('0'+(d.getMonth()+1)).slice(-2)+'/'+d.getFullYear() : '';
     return '<div class="dnn-card" style="position:relative" onclick="openDnnModal('+idx+')" role="button" tabindex="0" draggable="false">'
-      + cardShareHtml(item.title || '')
+      + cardShareHtml(item.title || '', item.image_url || '', item.id || '', 'daily')
       + '<img src="'+escHtml(item.image_url || '')+'" alt="" loading="lazy" draggable="false">'
       + '<div class="dnn-card-foot">'
       + '<div class="dnn-card-date">'+dateStr+'</div>'
