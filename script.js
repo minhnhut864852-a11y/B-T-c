@@ -1222,6 +1222,8 @@ function setMemberLoggedIn(user) {
   if (mobMember) mobMember.style.setProperty('display','block','important');
   if (mobEmail)  mobEmail.textContent = email;
   initKnowledgeSection();
+  const lawWrap = document.getElementById('law-float-wrap');
+  if (lawWrap) lawWrap.style.display = 'flex';
 }
 function setMemberLoggedOut() {
   window._tradeAccessGranted = false;
@@ -1241,6 +1243,9 @@ function setMemberLoggedOut() {
   if (mobLogin)  mobLogin.style.setProperty('display','flex','important');
   if (mobMember) mobMember.style.setProperty('display','none','important');
   hideKnowledgeSection();
+  const lawWrap = document.getElementById('law-float-wrap');
+  if (lawWrap) lawWrap.style.display = 'none';
+  closeLawChat();
 }
 function toggleMemberMenu(e) {
   e.stopPropagation();
@@ -2691,3 +2696,107 @@ function closeDnnModal() {
 document.addEventListener('DOMContentLoaded', function() {
   loadDailyNews();
 });
+// ── LAW CHAT ────────────────────────────────────────────────────────────────
+let _lawBatch = [];
+let _lawBatchTimer = null;
+let _lawWaiting = false; // true while API call in progress
+const LAW_BATCH_DELAY = 4000;
+
+function openLawChat() {
+  window._supabase.auth.getSession().then(({ data: { session } }) => {
+    if (!session?.user) { openMemberLogin(); return; }
+    const modal = document.getElementById('law-chat-modal');
+    modal.classList.add('open');
+    modal.setAttribute('aria-hidden', 'false');
+    document.getElementById('law-chat-input').focus();
+  });
+}
+
+function closeLawChat() {
+  const modal = document.getElementById('law-chat-modal');
+  if (!modal) return;
+  modal.classList.remove('open');
+  modal.setAttribute('aria-hidden', 'true');
+  clearTimeout(_lawBatchTimer);
+  _lawBatch = [];
+  document.getElementById('law-batch-indicator')?.remove();
+}
+
+function sendLawQuestion() {
+  const input   = document.getElementById('law-chat-input');
+  const question = input.value.trim();
+  if (!question || _lawWaiting) return;
+
+  const messages = document.getElementById('law-chat-messages');
+  const userMsg = document.createElement('div');
+  userMsg.className = 'law-msg user';
+  userMsg.textContent = question;
+  messages.appendChild(userMsg);
+  input.value = '';
+  messages.scrollTop = messages.scrollHeight;
+
+  _lawBatch.push(question);
+  clearTimeout(_lawBatchTimer);
+  _updateLawBatchIndicator();
+  _lawBatchTimer = setTimeout(_flushLawBatch, LAW_BATCH_DELAY);
+}
+
+function _updateLawBatchIndicator() {
+  const messages = document.getElementById('law-chat-messages');
+  let el = document.getElementById('law-batch-indicator');
+  if (!el) {
+    el = document.createElement('div');
+    el.id = 'law-batch-indicator';
+    el.className = 'law-msg law-batch-indicator';
+    messages.appendChild(el);
+  }
+  el.innerHTML = '⏳ Tự động gửi sau 4 giây... <button class="law-send-now-btn" onclick="_flushLawBatch()">Gửi ngay ⚡</button>';
+  messages.scrollTop = messages.scrollHeight;
+}
+
+async function _flushLawBatch() {
+  if (_lawBatch.length === 0) return;
+  clearTimeout(_lawBatchTimer);
+  document.getElementById('law-batch-indicator')?.remove();
+
+  const combined = _lawBatch.join(' ');
+  _lawBatch = [];
+  _lawWaiting = true;
+
+  const messages = document.getElementById('law-chat-messages');
+  const sendBtn  = document.getElementById('law-chat-send');
+  const input    = document.getElementById('law-chat-input');
+  sendBtn.disabled = true;
+
+  const typing = document.createElement('div');
+  typing.className = 'law-msg typing';
+  typing.id = 'law-typing';
+  typing.textContent = '⚖️ Đang tra cứu văn bản pháp luật...';
+  messages.appendChild(typing);
+  messages.scrollTop = messages.scrollHeight;
+
+  try {
+    const res = await fetch('https://law.botoctrading.workers.dev', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ question: combined })
+    });
+    const data = await res.json();
+    document.getElementById('law-typing')?.remove();
+    const botMsg = document.createElement('div');
+    botMsg.className = 'law-msg bot';
+    botMsg.textContent = data.answer || 'Không nhận được phản hồi.';
+    messages.appendChild(botMsg);
+  } catch (e) {
+    document.getElementById('law-typing')?.remove();
+    const errMsg = document.createElement('div');
+    errMsg.className = 'law-msg bot';
+    errMsg.textContent = '⚠️ Lỗi kết nối. Vui lòng thử lại.';
+    messages.appendChild(errMsg);
+  }
+
+  messages.scrollTop = messages.scrollHeight;
+  _lawWaiting = false;
+  sendBtn.disabled = false;
+  input.focus();
+}
