@@ -747,6 +747,7 @@ section.hero {
       </li>
       <li><a href="#events" data-vi="Event" data-en="Events">Event</a></li>
       <li><a href="#reviews" data-vi="Review" data-en="Reviews">Review</a></li>
+      <li><a href="#kien-thuc" data-vi="Kiến Thức Crypto" data-en="Crypto Knowledge">Kiến Thức Crypto</a></li>
       <li class="has-submenu">
         <a href="#newbie" data-vi="Người Mới" data-en="Beginners">Người Mới</a>
         <div class="submenu">
@@ -813,6 +814,7 @@ section.hero {
   </div>
   <a href="#events" onclick="closeMenu()" data-vi="Event" data-en="Events">Event</a>
   <a href="#reviews" onclick="closeMenu()" data-vi="Review Về Nhóm" data-en="Group Reviews">Review Về Nhóm</a>
+  <a href="#kien-thuc" onclick="closeMenu()" data-vi="Kiến Thức Crypto" data-en="Crypto Knowledge"><img src="icon_knowledge.svg" style="width:16px;height:16px;vertical-align:middle;margin-right:4px" alt=""> Kiến Thức Crypto</a>
   <!-- Người Mới accordion -->
   <div class="mob-acc-header" onclick="toggleMobAcc('mob-acc-newbie',this)">
     <span data-vi="Người Mới" data-en="Beginners">Người Mới</span><span class="mob-acc-arrow">▾</span>
@@ -1409,8 +1411,64 @@ section.hero {
 
 <!-- KIẾN THỨC CRYPTO -->
 <style>
-/* ── Light / Dark mode toggle ── */</style>
+.kt-cat-btn{background:rgba(139,92,246,.12);border:1px solid rgba(139,92,246,.25);color:rgba(196,181,253,.8);padding:.38rem .95rem;border-radius:50px;font-size:.8rem;cursor:pointer;transition:all .18s;font-family:inherit}
+.kt-cat-btn:hover,.kt-cat-btn.active{background:rgba(139,92,246,.35);border-color:rgba(139,92,246,.6);color:#e9d5ff}
+.kt-card{background:rgba(255,255,255,.04);border:1px solid rgba(139,92,246,.2);border-radius:16px;overflow:hidden;cursor:pointer;transition:transform .2s,border-color .2s,box-shadow .2s;display:flex;flex-direction:column}
+.kt-card:hover{transform:translateY(-3px);border-color:rgba(139,92,246,.5);box-shadow:0 8px 32px rgba(139,92,246,.15)}
+.kt-card-cover{width:100%;height:155px;background:linear-gradient(135deg,rgba(139,92,246,.15),rgba(79,70,229,.1));display:flex;align-items:center;justify-content:center;font-size:2.5rem;flex-shrink:0}
+.kt-card-cover img{width:100%;height:100%;object-fit:cover}
+.kt-card-body{padding:.9rem 1rem;flex:1;display:flex;flex-direction:column;gap:.4rem}
+.kt-tag{display:inline-block;font-size:.68rem;font-weight:700;text-transform:uppercase;letter-spacing:.5px;padding:.18rem .55rem;border-radius:4px;background:rgba(167,139,250,.15);color:#a78bfa}
+.kt-card-title{font-size:.92rem;font-weight:700;color:#e9d5ff;line-height:1.4;margin:0}
+.kt-card-excerpt{font-size:.8rem;color:rgba(196,181,253,.6);line-height:1.5;flex:1}
+.kt-card-meta{font-size:.72rem;color:rgba(196,181,253,.38);display:flex;justify-content:space-between;padding-top:.5rem;border-top:1px solid rgba(139,92,246,.1);margin-top:auto}
+.kt-pin-badge{display:inline-block;background:rgba(251,191,36,.15);color:#fbbf24;border-radius:3px;font-size:.65rem;padding:.1rem .35rem;margin-left:.3rem;font-weight:700}
+.kt-modal-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.88);z-index:5000;overflow-y:auto;padding:2rem 1rem}
+.kt-modal-box{max-width:740px;margin:0 auto;background:#120c2a;border:1px solid rgba(139,92,246,.3);border-radius:20px;overflow:hidden;position:relative}
+.kt-modal-close{position:absolute;top:1rem;right:1rem;background:rgba(255,255,255,.07);border:none;color:#c4b5d9;width:34px;height:34px;border-radius:50%;font-size:1.1rem;cursor:pointer;display:flex;align-items:center;justify-content:center;z-index:10;transition:background .15s}
+.kt-modal-close:hover{background:rgba(255,255,255,.13)}
+.kt-form-label{display:block;font-size:.78rem;font-weight:600;color:rgba(196,181,253,.7);margin-bottom:.4rem;text-transform:uppercase;letter-spacing:.4px}
+.kt-form-input{width:100%;box-sizing:border-box;background:rgba(255,255,255,.06);border:1px solid rgba(139,92,246,.25);border-radius:10px;color:#e9d5ff;padding:.6rem .85rem;font-size:.88rem;font-family:inherit;outline:none;transition:border-color .18s}
+.kt-form-input:focus{border-color:rgba(139,92,246,.6)}
+.kt-form-select{appearance:none;cursor:pointer}
+.kt-form-textarea{resize:vertical;min-height:90px}
 
+</style>
+
+<section id="kien-thuc" style="padding:5rem 1.5rem 4rem;background:linear-gradient(180deg,#0d0820 0%,#080515 100%)">
+  <div style="max-width:1100px;margin:0 auto">
+    <div class="reveal" style="text-align:center;margin-bottom:2.5rem">
+      <div class="section-label" data-vi="// Cộng Đồng Chia Sẻ" data-en="// Community Knowledge">// Cộng Đồng Chia Sẻ</div>
+      <h2 class="section-title" data-vi="Kiến Thức Crypto" data-en="Crypto Knowledge"><img src="icon_knowledge.svg" style="width:16px;height:16px;vertical-align:middle;margin-right:4px" alt=""> Kiến Thức Crypto</h2>
+      <p style="color:var(--muted);font-size:.92rem;margin-top:.5rem;margin-bottom:0" data-vi="Bài viết và kinh nghiệm từ thành viên cộng đồng" data-en="Articles and experience from community members">Bài viết và kinh nghiệm từ thành viên cộng đồng</p>
+    </div>
+
+    <!-- Lock (logged out) -->
+    <div id="kt-lock" class="reveal" style="text-align:center;padding:3.5rem 2rem;background:rgba(139,92,246,.06);border:1px solid rgba(139,92,246,.2);border-radius:20px">
+      <div style="margin-bottom:1rem"><img src="icon_lock_1.svg" style="width:52px;height:52px" alt=""></div>
+      <h3 style="color:#c4b5d9;margin:0 0 .5rem;font-size:1.05rem;font-weight:700" data-vi="Dành riêng cho thành viên" data-en="Members only">Dành riêng cho thành viên</h3>
+      <p style="color:rgba(196,181,253,.5);font-size:.86rem;margin:0 0 1.5rem;line-height:1.6" data-vi="Đăng nhập để đọc và chia sẻ kiến thức cùng cộng đồng Bộ Tộc" data-en="Login to read and share knowledge with the BoToc community">Đăng nhập để đọc và chia sẻ kiến thức cùng cộng đồng Bộ Tộc</p>
+      <button onclick="openMemberLogin()" style="background:linear-gradient(135deg,#7c3aed,#4f46e5);border:none;color:#fff;padding:.6rem 1.8rem;border-radius:50px;font-size:.88rem;font-weight:600;cursor:pointer" data-vi="Đăng Nhập" data-en="Login">Đăng Nhập</button>
+    </div>
+
+    <!-- Content (logged in) -->
+    <div id="kt-content" style="display:none">
+      <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:.75rem;margin-bottom:1.8rem">
+        <div style="display:flex;gap:.45rem;flex-wrap:wrap">
+          <button class="kt-cat-btn active" data-cat="all" onclick="filterKt(this)" data-vi="Tất Cả" data-en="All">Tất Cả</button>
+          <button class="kt-cat-btn" data-cat="futures" onclick="filterKt(this)">📈 Futures</button>
+          <button class="kt-cat-btn" data-cat="onchain" onclick="filterKt(this)">⛓️ Onchain</button>
+          <button class="kt-cat-btn" data-cat="p2p" onclick="filterKt(this)">💱 P2P</button>
+          <button class="kt-cat-btn" data-cat="basics" onclick="filterKt(this)" data-vi="📚 Cơ Bản" data-en="📚 Basics">📚 Cơ Bản</button>
+          <button class="kt-cat-btn" data-cat="tools" onclick="filterKt(this)">🔧 Tools</button>
+        </div>
+        <button onclick="openKtWrite()" style="background:linear-gradient(135deg,#7c3aed,#4f46e5);border:none;color:#fff;padding:.5rem 1.15rem;border-radius:50px;font-size:.83rem;font-weight:600;cursor:pointer;white-space:nowrap" data-vi="✏️ Viết Bài" data-en="✏️ Write Post">✏️ Viết Bài</button>
+      </div>
+      <div id="kt-grid" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(290px,1fr));gap:1.2rem"></div>
+      <div id="kt-empty" style="display:none;text-align:center;padding:3rem 1rem;color:rgba(196,181,253,.4);font-size:.9rem" data-vi="Chưa có bài viết nào trong mục này. Hãy là người đầu tiên chia sẻ! ✨" data-en="No posts yet. Be the first to share! ✨">Chưa có bài viết nào trong mục này. Hãy là người đầu tiên chia sẻ! ✨</div>
+    </div>
+  </div>
+</section>
 
 <!-- ── Kiến Thức: Post Detail Modal ── -->
 <div class="kt-modal-overlay" id="kt-detail-overlay" style="display:none" onclick="if(event.target===this)closeKtDetail()">

@@ -1190,9 +1190,250 @@ async function doForgotPassword() {
 function navShow(el) { if (el) { el.style.setProperty('display', 'flex', 'important'); } }
 function navHide(el) { if (el) { el.style.setProperty('display', 'none', 'important'); } }
 
-// Kiến Thức Crypto is UAT-only — these are no-op stubs for production
-function initKnowledgeSection() {}
-function hideKnowledgeSection() {}
+/* ── Kiến Thức Crypto constants ── */
+const KT_CAT_EMOJI  = { futures:'📈', onchain:'⛓️', p2p:'💱', basics:'📚', tools:'🔧' };
+const KT_CAT_LABELS = { futures:'Futures', onchain:'Onchain', p2p:'P2P', basics:'Cơ Bản', tools:'Tools' };
+let _ktAllPosts = [];
+let _ktActiveCat = 'all';
+
+async function initKnowledgeSection() {
+  const content = document.getElementById('kt-content');
+  const lock    = document.getElementById('kt-lock');
+  if (content) content.style.display = 'block';
+  if (lock)    lock.style.display    = 'none';
+  // Reset to "Tất Cả" tab on each login
+  _ktActiveCat = 'all';
+  document.querySelectorAll('.kt-cat-btn').forEach(b => b.classList.toggle('active', b.dataset.cat === 'all'));
+  await loadKtPosts();
+}
+
+function hideKnowledgeSection() {
+  const content = document.getElementById('kt-content');
+  const lock    = document.getElementById('kt-lock');
+  if (content) content.style.display = 'none';
+  if (lock)    lock.style.display    = 'block';
+  _ktAllPosts = [];
+  const grid = document.getElementById('kt-grid');
+  if (grid) grid.innerHTML = '';
+}
+
+async function loadKtPosts() {
+  const grid  = document.getElementById('kt-grid');
+  const empty = document.getElementById('kt-empty');
+  if (!grid || !window._supabase) return;
+  grid.innerHTML = '<div style="grid-column:1/-1;text-align:center;color:rgba(196,181,253,.4);padding:2.5rem;font-size:.88rem">Đang tải...</div>';
+  if (empty) empty.style.display = 'none';
+  try {
+    const { data, error } = await window._supabase
+      .from('knowledge_posts')
+      .select('*')
+      .eq('status', 'published')
+      .order('pinned',     { ascending: false })
+      .order('created_at', { ascending: false });
+    if (error) throw error;
+    _ktAllPosts = data || [];
+    renderKtPosts(_ktActiveCat);
+  } catch(e) {
+    console.error('[KT] loadKtPosts error:', e);
+    grid.innerHTML = '<div style="grid-column:1/-1;text-align:center;color:rgba(248,113,113,.6);padding:2.5rem;font-size:.88rem">Không thể tải bài viết: ' + (e?.message || e) + '</div>';
+  }
+}
+
+function renderKtPosts(cat) {
+  _ktActiveCat = cat;
+  const grid  = document.getElementById('kt-grid');
+  const empty = document.getElementById('kt-empty');
+  if (!grid) return;
+  const posts = cat === 'all' ? _ktAllPosts : _ktAllPosts.filter(p => p.category === cat);
+  if (posts.length === 0) {
+    grid.innerHTML = '';
+    if (empty) empty.style.display = 'block';
+    return;
+  }
+  if (empty) empty.style.display = 'none';
+  grid.innerHTML = posts.map(p => {
+    const coverHtml = p.cover_image
+      ? `<div class="kt-card-cover"><img src="${escHtml(p.cover_image)}" alt="" loading="lazy" onerror="this.parentElement.innerHTML='${KT_CAT_EMOJI[p.category]||'📝'}'"></div>`
+      : `<div class="kt-card-cover">${KT_CAT_EMOJI[p.category] || '📝'}</div>`;
+    const pinBadge = p.pinned ? '<span class="kt-pin-badge">📌</span>' : '';
+    const date = p.created_at ? new Date(p.created_at).toLocaleDateString('vi-VN') : '';
+    const catLabel = escHtml(KT_CAT_LABELS[p.category] || p.category);
+    return `
+      <div class="kt-card" onclick="openKtDetail('${escHtml(p.id)}')">
+        ${coverHtml}
+        <div class="kt-card-body">
+          <div><span class="kt-tag">${catLabel}</span>${pinBadge}</div>
+          <p class="kt-card-title">${escHtml(p.title)}</p>
+          <p class="kt-card-excerpt">${escHtml((p.excerpt || '').substring(0, 120))}${(p.excerpt||'').length > 120 ? '…' : ''}</p>
+          <div class="kt-card-meta">
+            <span>👤 ${escHtml(p.author_name || 'Member')}</span>
+            <span>${date}</span>
+          </div>
+        </div>
+      </div>`;
+  }).join('');
+}
+
+function filterKt(btn) {
+  document.querySelectorAll('.kt-cat-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  renderKtPosts(btn.dataset.cat);
+}
+
+function openKtDetail(id) {
+  const post = _ktAllPosts.find(p => p.id === id);
+  if (!post) return;
+  const inner = document.getElementById('kt-detail-inner');
+  if (!inner) return;
+
+  let mediaHtml = '';
+  if (post.youtube_url) {
+    const ytId = _ktExtractYtId(post.youtube_url);
+    if (ytId) {
+      mediaHtml = `<div style="position:relative;padding-bottom:56.25%;height:0;margin-bottom:1.5rem;border-radius:12px;overflow:hidden">
+        <iframe src="https://www.youtube.com/embed/${ytId}" style="position:absolute;inset:0;width:100%;height:100%;border:none" allowfullscreen loading="lazy"></iframe>
+      </div>`;
+    }
+  } else if (post.cover_image) {
+    mediaHtml = `<img src="${escHtml(post.cover_image)}" alt="" style="width:100%;max-height:320px;object-fit:cover;border-radius:12px;margin-bottom:1.5rem" onerror="this.style.display='none'" loading="lazy">`;
+  }
+
+  const date = post.created_at
+    ? new Date(post.created_at).toLocaleDateString('vi-VN', { year:'numeric', month:'long', day:'numeric' })
+    : '';
+  const catLabel = escHtml(KT_CAT_LABELS[post.category] || post.category);
+  const pinBadge = post.pinned ? '<span class="kt-pin-badge" style="margin-left:.5rem">📌 Ghim</span>' : '';
+
+  inner.innerHTML = `
+    ${mediaHtml}
+    <div style="display:flex;align-items:center;gap:.5rem;margin-bottom:1rem;flex-wrap:wrap">
+      <span class="kt-tag">${catLabel}</span>${pinBadge}
+    </div>
+    <h2 style="color:#e9d5ff;font-size:clamp(1.1rem,3vw,1.5rem);font-weight:800;margin:0 0 .75rem;line-height:1.3">${escHtml(post.title)}</h2>
+    <div style="display:flex;gap:1rem;color:rgba(196,181,253,.45);font-size:.78rem;margin-bottom:1.5rem;flex-wrap:wrap">
+      <span>👤 ${escHtml(post.author_name || 'Member')}</span>
+      <span>📅 ${date}</span>
+    </div>
+    ${post.excerpt ? `<p style="color:rgba(196,181,253,.72);font-size:.9rem;line-height:1.6;margin:0 0 1.5rem;padding:.9rem 1rem;background:rgba(139,92,246,.08);border-left:3px solid rgba(139,92,246,.5);border-radius:0 8px 8px 0">${escHtml(post.excerpt)}</p>` : ''}
+    <div style="color:rgba(196,181,253,.82);font-size:.9rem;line-height:1.9;white-space:pre-wrap">${escHtml(post.content || '')}</div>`;
+
+  const overlay = document.getElementById('kt-detail-overlay');
+  if (overlay) { overlay.style.display = 'block'; document.body.style.overflow = 'hidden'; }
+}
+
+function closeKtDetail() {
+  const overlay = document.getElementById('kt-detail-overlay');
+  if (overlay) overlay.style.display = 'none';
+  document.body.style.overflow = '';
+}
+
+function _ktExtractYtId(url) {
+  const m = (url || '').match(/(?:v=|youtu\.be\/|embed\/)([A-Za-z0-9_-]{11})/);
+  return m ? m[1] : null;
+}
+
+function openKtWrite() {
+  ['kt-w-title','kt-w-excerpt','kt-w-content','kt-w-cover','kt-w-yt'].forEach(id => {
+    const el = document.getElementById(id); if (el) el.value = '';
+  });
+  const cat = document.getElementById('kt-w-cat'); if (cat) cat.value = '';
+  const err = document.getElementById('kt-w-error'); if (err) err.style.display = 'none';
+  const btn = document.getElementById('kt-w-submit');
+  if (btn) { btn.disabled = false; btn.textContent = 'Gửi Bài'; }
+  // Reset cover image widget
+  const preview = document.getElementById('kt-w-cover-preview');
+  const placeholder = document.getElementById('kt-w-cover-placeholder');
+  const fileInput = document.getElementById('kt-w-cover-file');
+  const status = document.getElementById('kt-w-cover-status');
+  if (preview) { preview.src = ''; preview.style.display = 'none'; }
+  if (placeholder) placeholder.style.display = 'flex';
+  if (fileInput) fileInput.value = '';
+  if (status) status.textContent = '';
+  const overlay = document.getElementById('kt-write-overlay');
+  if (overlay) { overlay.style.display = 'block'; document.body.style.overflow = 'hidden'; }
+}
+
+async function ktUploadCover(input) {
+  const file = input.files[0];
+  if (!file) return;
+  if (file.size > 5 * 1024 * 1024) { alert('Ảnh quá lớn — tối đa 5MB'); return; }
+  if (!window._supabase) { alert('Lỗi kết nối Supabase'); return; }
+  const { data: { session } } = await window._supabase.auth.getSession();
+  if (!session) {
+    const statusEl = document.getElementById('kt-w-cover-status');
+    if (statusEl) statusEl.textContent = '❌ Vui lòng đăng nhập để upload ảnh';
+    return;
+  }
+  const statusEl = document.getElementById('kt-w-cover-status');
+  const preview  = document.getElementById('kt-w-cover-preview');
+  const placeholder = document.getElementById('kt-w-cover-placeholder');
+  if (statusEl) statusEl.textContent = '⏳ Đang tải ảnh lên...';
+  const ext  = file.name.split('.').pop().toLowerCase();
+  const path = `kt-covers/${Date.now()}.${ext}`;
+  const { error } = await window._supabase.storage
+    .from('media')
+    .upload(path, file, { cacheControl: '3600', upsert: true });
+  if (error) {
+    if (statusEl) statusEl.textContent = '❌ Lỗi: ' + error.message;
+    return;
+  }
+  const { data: { publicUrl } } = window._supabase.storage.from('media').getPublicUrl(path);
+  document.getElementById('kt-w-cover').value = publicUrl;
+  if (preview) { preview.src = publicUrl; preview.style.display = 'block'; }
+  if (placeholder) placeholder.style.display = 'none';
+  if (statusEl) statusEl.textContent = '✅ Ảnh đã tải lên thành công';
+}
+
+function closeKtWrite() {
+  const overlay = document.getElementById('kt-write-overlay');
+  if (overlay) overlay.style.display = 'none';
+  document.body.style.overflow = '';
+}
+
+async function submitKtPost() {
+  const title   = (document.getElementById('kt-w-title')?.value   || '').trim();
+  const cat     =  document.getElementById('kt-w-cat')?.value     || '';
+  const excerpt = (document.getElementById('kt-w-excerpt')?.value || '').trim();
+  const content = (document.getElementById('kt-w-content')?.value || '').trim();
+  const cover   = (document.getElementById('kt-w-cover')?.value   || '').trim();
+  const yt      = (document.getElementById('kt-w-yt')?.value      || '').trim();
+  const errEl   =  document.getElementById('kt-w-error');
+  const btn     =  document.getElementById('kt-w-submit');
+
+  const showErr = msg => { if (errEl) { errEl.textContent = msg; errEl.style.display = 'block'; } };
+  if (errEl) errEl.style.display = 'none';
+
+  if (!title)   return showErr('Vui lòng nhập tiêu đề.');
+  if (!cat)     return showErr('Vui lòng chọn danh mục.');
+  if (!content) return showErr('Vui lòng nhập nội dung.');
+
+  const { data: { session } } = await window._supabase.auth.getSession();
+  if (!session) { openMemberLogin(); return; }
+
+  const authorName = session.user?.user_metadata?.full_name || 'Member';
+  if (btn) { btn.disabled = true; btn.textContent = 'Đang gửi...'; }
+
+  try {
+    const { error } = await window._supabase.from('knowledge_posts').insert([{
+      title,
+      category:    cat,
+      excerpt,
+      content,
+      cover_image: cover || null,
+      youtube_url: yt    || null,
+      author_id:   session.user.id,
+      author_name: authorName,
+      status:      'pending',
+      pinned:      false
+    }]);
+    if (error) throw error;
+    closeKtWrite();
+    alert('✅ Bài viết đã gửi và đang chờ phê duyệt!');
+  } catch(e) {
+    showErr('Lỗi: ' + (e.message || 'Không xác định'));
+    if (btn) { btn.disabled = false; btn.textContent = 'Gửi Bài'; }
+  }
+}
 
 function setMemberLoggedIn(user) {
   // If admin flagged this account as needing a password, show set-password panel instead
