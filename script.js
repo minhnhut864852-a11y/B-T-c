@@ -1486,6 +1486,8 @@ function setMemberLoggedIn(user) {
   initKnowledgeSection();
   const lawWrap = document.getElementById('law-float-wrap');
   if (lawWrap) lawWrap.style.display = 'flex';
+  window._lawUserId = user?.id || null;
+  window._lawUserEmail = user?.email || null;
 }
 function setMemberLoggedOut() {
   window._tradeAccessGranted = false;
@@ -1508,6 +1510,8 @@ function setMemberLoggedOut() {
   const lawWrap = document.getElementById('law-float-wrap');
   if (lawWrap) lawWrap.style.display = 'none';
   closeLawChat();
+  window._lawUserId = null;
+  window._lawUserEmail = null;
 }
 function toggleMemberMenu(e) {
   e.stopPropagation();
@@ -3015,7 +3019,11 @@ async function _flushLawBatch() {
     const res = await fetch('https://law.botoctrading.workers.dev', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ question: combined })
+      body: JSON.stringify({
+        question: combined,
+        user_id: window._lawUserId || null,
+        email: window._lawUserEmail || null
+      })
     });
     const data = await res.json();
     document.getElementById('law-typing')?.remove();
