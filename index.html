@@ -446,17 +446,14 @@ section.hero {
     padding: 0.65rem 0.85rem !important;
     gap: 0 0.65rem !important;
   }
-  /* Hide ALL dividers */
   .hpc-vdiv { display: none !important; }
-  /* Hide volume (9th child: glow, icon, name, vdiv, price, vdiv, change, vdiv, volume) */
   .hero-price-card > :nth-child(9) { display: none !important; }
-  /* Scale down fonts */
   .hpc-icon-ring { width: 36px !important; height: 36px !important; font-size: 0.95rem !important; }
   .hpc-ticker { font-size: 0.92rem !important; }
   .hpc-name-full { font-size: 0.7rem !important; }
   .hpc-price { font-size: 0.92rem !important; line-height: 1.2 !important; }
+  .hpc-col-stat:nth-child(4) { text-align: right !important; }
   .hpc-change { font-size: 0.92rem !important; line-height: 1.2 !important; }
-  .hpc-volume { font-size: 0.85rem !important; }
   .hpc-col-label { font-size: 0.58rem !important; margin-top: 0.15rem !important; }
   .hpc-col-stat { text-align: right !important; }
   .fg-score { font-size: 3.5rem !important; }
@@ -729,25 +726,8 @@ section.hero {
 </script>
 </head>
 <body>
+
 <!-- UAT Environment Banner — only visible on uat.botoc.trading -->
-<script>
-  var h = window.location.hostname;
-  if (h === 'uat.botoc.trading' || h.endsWith('github.io')) {
-    document.addEventListener('DOMContentLoaded', function() {
-      var b = document.createElement('div');
-      b.id = 'uat-banner';
-      b.innerHTML = '🧪 <strong>UAT Environment</strong> — Đây là môi trường test, không phải production';
-      b.style.cssText = 'position:fixed;top:0;left:0;right:0;z-index:99999;background:#dc2626;color:#fff;text-align:center;padding:.45rem 1rem;font-size:.82rem;letter-spacing:.3px;';
-      document.body.prepend(b);
-      document.body.style.paddingTop = '34px';
-      // Push fixed nav below the UAT banner
-      var nav = document.querySelector('nav');
-      if (nav) nav.style.top = '34px';
-      var mobileMenu = document.getElementById('mobile-menu');
-      if (mobileMenu) mobileMenu.style.top = '130px';
-    });
-  }
-</script>
 
 <nav>
   <a href="#" class="nav-logo">
@@ -1169,7 +1149,7 @@ section.hero {
         <div class="metric-value gold" id="metric-avgpnl">—</div>
         <div class="metric-change" id="metric-avgpnl-sub">mỗi lệnh</div>
       </div>
-    </div>
+</div>
     <div class="chart-area">
       <div class="chart-title" data-vi="Tăng Trưởng Danh Mục Hàng Tháng (%)" data-en="Monthly Portfolio Growth (%)">Tăng Trưởng Danh Mục Hàng Tháng (%)</div>
       <svg id="dashChart" class="chart-svg" viewBox="0 0 900 165" preserveAspectRatio="none">
@@ -2252,6 +2232,17 @@ section.hero {
 
 </div><!-- /#member-login-overlay -->
 
+
+
+  <script>
+    if ('serviceWorker' in navigator) {
+      window.addEventListener('load', () => {
+        navigator.serviceWorker.register('sw.js').catch(() => {});
+      });
+    }
+  </script>
+
+
 <!-- ═══════════════════════════════════════════════════════
      MIỄN TRỪ TRÁCH NHIỆM / DISCLAIMER
 ════════════════════════════════════════════════════════ -->
@@ -2272,14 +2263,5 @@ section.hero {
     </p>
   </div>
 </section>
-
-
-  <script>
-    if ('serviceWorker' in navigator) {
-      window.addEventListener('load', () => {
-        navigator.serviceWorker.register('sw.js').catch(() => {});
-      });
-    }
-  </script>
 </body>
 </html>
